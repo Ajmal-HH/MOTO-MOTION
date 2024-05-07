@@ -229,7 +229,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     res.status(200).json({ message: "User logged out" });
   });
 
-
+console.log("HELOO")
 
 export { 
     verifyUser,
