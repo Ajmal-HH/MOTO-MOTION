@@ -1,4 +1,3 @@
-import React from 'react'
 import banner from '../../assets/bike2.jpg'
 import banner1 from '../../assets/bike7.jpg'
 import bike from '../../assets/gt 650.jpg'

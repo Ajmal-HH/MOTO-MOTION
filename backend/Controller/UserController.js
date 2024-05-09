@@ -129,7 +129,6 @@ const verifyLogin = asyncHandler(async(req,res)=>{
                         httpOnly : false,
                         secure : false,
                         sameSite : "strict",
-                        maxAge : 60000
                     })
                      return res.status(200)
                       .json({status : true})
@@ -227,9 +226,8 @@ const logoutUser = asyncHandler(async (req, res) => {
       expires: new Date(0),
     });    
     res.status(200).json({ message: "User logged out" });
-  });
+  });   
 
-console.log("HELOO")
 
 export { 
     verifyUser,

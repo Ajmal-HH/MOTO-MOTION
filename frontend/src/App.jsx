@@ -27,6 +27,9 @@ import EditbikeOwner from './Pages/BikeOwnerSide/EditbikeOwner'
 import UserProfile from './Pages/UserSide/UserProfile'
 import EditUser from './Pages/UserSide/EditUser'
 import UserDetails from './Pages/AdminSide/UserDetails'
+import UserProtectedRoute from './Routes/UserProtectedRoute'
+import OwnerProtectedRoute from './Routes/OwnerProtectedRoute'
+import AdminProtectedRoute from './Routes/AdminProtectedRoute'
 
 function App() {
   return (
@@ -41,20 +44,25 @@ function App() {
         <Route path='/otp' element={<OTPpage />} />
         <Route path='/bikes' element={<Bikes />} ></Route>
         <Route path='/bike-details' element={<BikeDetails />} />
+        <Route element={<UserProtectedRoute />}>
         <Route path='/userprofile' element={<UserProfile />} />
         <Route path='/edit-user' element={<EditUser />} />
+        </Route>
 
 
         <Route path='/bikeowner-signup' element={<BikeOwnerSignup />} />
         <Route path='/bikeowner-login' element={<BikeOwnerLogin />} />
+        <Route element={<OwnerProtectedRoute />}>
         <Route path='/bikeowner-dashboard' element={<BikeOwnerDashboard />} />
         <Route path='/addbike' element={<AddBike />} />
         <Route path='/bikeowner-details' element={<BikeOwnerDetails />} />
         <Route path='/bikeowner-bikedetails' element={<BikeDetailsOwnerside />}/>
         <Route path='/bikeowner-editbike' element={<EditbikeOwner />} />
+        </Route>
 
 
        <Route path='/admin' element={<AdminLogin />} />
+       <Route element={<AdminProtectedRoute />} >
        <Route path='/admin-dashboard' element={<AdminDashboard />} />
        <Route path='/user-list' element={<UserList /> } />
        <Route path='/user-details' element={<UserDetails />} />
@@ -63,6 +71,7 @@ function App() {
        <Route path='/admin-loadedituser' element={<AdminEdituser />} />
        <Route path='/addowner' element={<AddOwner />} />
        <Route path='/admin-loadeditowner' element={<AdminEditOwner />} />
+       </Route>
        
       </Routes>
     </Router>   

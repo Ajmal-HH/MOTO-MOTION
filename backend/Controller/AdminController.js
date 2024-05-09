@@ -41,7 +41,6 @@ const adminAuth = asyncHandler(async(req,res)=>{
                     httpOnly : false,
                     secure : false,          
                     sameSite : "strict",
-                    maxAge : 60000
                 })
                 return res.status(200)
                 .json({message : 'Login Successfully'})
@@ -260,6 +259,13 @@ const adminEditOwer = async (req,res) =>{
     }
 }
 
+const logoutAdmin = async (req, res) => {
+    res.cookie("jwt-admin", "", {   
+      httpOnly: false,
+      expires: new Date(0),
+    });    
+    res.status(200).json({status : true});
+  }
 
 
 export {
@@ -277,5 +283,6 @@ export {
     loadAdminOwnerEdit,
     adminEditOwer,
     userDetails,
-    verifyDocument
+    verifyDocument,
+    logoutAdmin
 }

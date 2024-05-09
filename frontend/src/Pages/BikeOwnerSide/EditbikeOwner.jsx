@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
+import BikeOwnerSidebar from '../../Components/BikeOwnerSide/BikeOwnerSidebar';
 
 
 function EditbikeOwner() {
@@ -32,7 +33,7 @@ function EditbikeOwner() {
                 setDetails(details);
                 setImage(image);
             })
-            .catch((err) => {
+            .catch(() => {
                 toast.error('Error fetching bike data');
             });
     }, [bikeId]);
@@ -79,9 +80,11 @@ function EditbikeOwner() {
     };
 
   return (
-    <div className='flex flex-col items-center' >
+    <div className="flex">
+        <BikeOwnerSidebar />
+    <div className='flex flex-col items-center ml-80' >
     <div className=' bg-gray-600 h-[620px] w-[400px] rounded-lg bg-opacity-70 '>
-        <h1 className='text-center font-googleFont font-bold text-2xl mt-4'>ADD BIKE</h1>
+        <h1 className='text-center font-googleFont font-bold text-2xl mt-4'>EDIT BIKE</h1>
         <form onSubmit={handleSubmit} className='mt-5 ml-10' encType='multipart/form-data'>
             <label className='font-googleFont text-lg'>Bike Name</label>
             <input type="bikename"
@@ -148,7 +151,7 @@ function EditbikeOwner() {
             />
 
             <button type='submit' className="py-2 px-5 mt-5 ml-28  bg-amber-500 text-black font-googleFont font-semibold  rounded-full shadow-md hover:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-400 focus:ring-opacity-75">
-                ADD BIKE
+                UPDATE BIKE
             </button>
         </form>
 
@@ -156,6 +159,7 @@ function EditbikeOwner() {
 
 
 
+</div>
 </div>
   )
 }

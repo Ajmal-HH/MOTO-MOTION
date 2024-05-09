@@ -1,8 +1,7 @@
-import { Link, useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify';
-import Cookies from 'js-cookie'
 
 
 function AdminEdituser() {
@@ -14,9 +13,7 @@ function AdminEdituser() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const userId = searchParams.get('userId');
-
-//   const token = Cookies.get('jwt')
-
+  
   useEffect(()=>{
   axios.get(`/admin/admin-loadedituser?userId=${userId}`)
   .then((response)=>{
@@ -25,7 +22,7 @@ function AdminEdituser() {
     setMobile(response.data.mobile);
     setEmail(response.data.email);
   })
-  .catch((err)=>{
+  .catch(()=>{
     toast.error('Error to fetch userData')
   })
   },[userId])
@@ -44,7 +41,7 @@ function AdminEdituser() {
       toast.error('Please enter a valid mobile number');
     }  else {
       axios.post(`/admin/admin-edituser`, {_id : userId, name: trimmedName,   mobile})
-        .then((data) => {
+        .then(() => {
           toast.success('User data updated!!')
           navigate('/user-details');
         }).catch((err) => {

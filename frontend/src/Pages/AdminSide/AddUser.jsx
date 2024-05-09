@@ -1,8 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify';
-import Cookies from 'js-cookie'
 
 
 function AddUser() {
@@ -12,13 +11,7 @@ function AddUser() {
   const [password, setPassword] = useState('');
   const [mobile, setMobile] = useState('');
 
-//   const token = Cookies.get('jwt')
 
-//   useEffect(()=>{
-//     if(token){
-//       navigate('/')
-//     }
-//   },[token,navigate])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,7 +33,7 @@ function AddUser() {
       toast.error('Please enter at least 6 characters for the password');
     } else {
       axios.post(`/admin/adduser`, { name: trimmedName, email: trimmedEmail, password: trimmedPassword, mobile: trimmedMobile })
-        .then((data) => {
+        .then(() => {
           toast.success('New user Added!!')
           navigate('/user-details');
         }).catch((err) => {

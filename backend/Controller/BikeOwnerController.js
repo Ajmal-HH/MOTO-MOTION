@@ -84,9 +84,7 @@ const bikeOwnerLogin = asyncHandler(async(req,res)=>{
 
     if (password.trim() === '') {
         errorMessages.password = 'Empty password field';
-    } else if (password.length < 6) {
-        errorMessages.password = 'Password must be at least 6 characters long';
-    }
+    } 
 
     if (Object.keys(errorMessages).length > 0) {
         return res.status(400).json({ messages: errorMessages });
@@ -104,7 +102,6 @@ const bikeOwnerLogin = asyncHandler(async(req,res)=>{
                     httpOnly : false,
                     secure : false,
                     sameSite : "strict",
-                    maxAge : 60000
                 })
                  return res.status(200)
                   .json({
@@ -122,13 +119,24 @@ const bikeOwnerLogin = asyncHandler(async(req,res)=>{
             .json({message : 'Incorrect password'})
         }
     }else{
-        res.status(401)
+        res.status(401)   
         .json({message : 'Unauthorized user please signUp'})
     }
   } catch (error) {
     console.log(error.message);
   }
 })
+
+const loadOwnerDetails = async(req,res)=>{
+    const ownerId = req.session.ownerId
+    const owner = await bikeOwner.findOne({_id : ownerId})
+    if(owner){
+        res.json(owner)
+    }else{
+        res.status(400)
+        .json({message : 'Error to fetch bike owner details'})
+    }
+}
 
 
 const addBike = asyncHandler(async(req,res)=>{
@@ -212,41 +220,88 @@ const ownerEditBike = async (req,res) =>{
         const {_id,bikeName, bikeNO, locations,
             bikeCC, rent, bikeType, details} = req.body
 
-        const imagePaths = req.files.map(file => file.path);
+            const imagePaths = req.files.map(file => file.filename);
 
-        const bike = await Bike.findByIdAndUpdate(     
-            _id, 
-            { $set: { 
-                bike_name : bikeName,
-                bike_number : bikeNO ,    
-                bike_type : bikeType,    
-                bike_cc : bikeCC,
-                location : locations, 
-                price : rent, 
-                details, 
-                availability:'available',
-            } }
-        );
-        if(imagePaths){
-            const bike = await Bike.findByIdAndUpdate(
-                _id ,
-                { $set : {
+        if(imagePaths.length>=3){
+            const bike = await Bike.findByIdAndUpdate(     
+                _id, 
+                { $set: { 
+                    bike_name : bikeName,
+                    bike_number : bikeNO ,    
+                    bike_type : bikeType,    
+                    bike_cc : bikeCC,
+                    location : locations, 
+                    price : rent, 
+                    details, 
+                    availability:'available',
                     image : imagePaths
-                }}
-            )
+                } }
+            );
+            if(bike){
+                res.status(200)
+                .json({status : true})
+            }else{
+                res.status(400)
+                .json({message : 'Failed to update the bike data'})
+            }
+        }else{
+            const bike = await Bike.findByIdAndUpdate(     
+                _id, 
+                { $set: { 
+                    bike_name : bikeName,
+                    bike_number : bikeNO ,    
+                    bike_type : bikeType,    
+                    bike_cc : bikeCC,
+                    location : locations, 
+                    price : rent, 
+                    details, 
+                    availability:'available',
+                } }
+            );
+            if(bike){
+                res.status(200)
+                .json({status : true})
+            }else{
+                res.status(400)
+                .json({message : 'Failed to update the bike data'})
+            }
         }
 
-        if(bike){
-            res.status(200)
-            .json({status : true})
-        }else{
-            res.status(400)
-            .json({message : 'Failed to update the bike data'})
-        }
+        // const bike = await Bike.findByIdAndUpdate(     
+        //     _id, 
+        //     { $set: { 
+        //         bike_name : bikeName,
+        //         bike_number : bikeNO ,    
+        //         bike_type : bikeType,    
+        //         bike_cc : bikeCC,
+        //         location : locations, 
+        //         price : rent, 
+        //         details, 
+        //         availability:'available',
+        //     } }
+        // );
+        // if(imagePaths){
+        //     const bike = await Bike.findByIdAndUpdate(
+        //         _id ,
+        //         { $set : {
+        //             image : imagePaths
+        //         }}
+        //     )
+        // }
+
     } catch (error) {
-        
+        console.log(error.message);
     }
 }
+
+const logoutOwner = async (req, res) => {
+    req.session = null
+    res.cookie("bikeOwner-jwt", "", {   
+      httpOnly: false,
+      expires: new Date(0),
+    });    
+    res.status(200).json({ message: "Bike Owner logged out" });
+  }
 
 
 
@@ -258,6 +313,8 @@ export {
     bikeList,
     deleteBike,
     loadOwnerEditBike,
-    ownerEditBike
+    ownerEditBike,
+    loadOwnerDetails,
+    logoutOwner
   
 }

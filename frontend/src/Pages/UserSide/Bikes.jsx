@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import Header from '../../Components/UserSide/Header';
 import axios from '../../utils/axiosConfig'
 import { Link } from 'react-router-dom';

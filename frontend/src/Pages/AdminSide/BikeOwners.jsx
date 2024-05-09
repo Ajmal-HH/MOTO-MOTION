@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import Adminsidebar from '../../Components/AdminSide/Adminsidebar'
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify'

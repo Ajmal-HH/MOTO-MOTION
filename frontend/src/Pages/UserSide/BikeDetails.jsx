@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import Header from '../../Components/UserSide/Header'
 import axios from '../../utils/axiosConfig'
-import {useLocation,useNavigate} from 'react-router-dom'
+import {useLocation} from 'react-router-dom'
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 

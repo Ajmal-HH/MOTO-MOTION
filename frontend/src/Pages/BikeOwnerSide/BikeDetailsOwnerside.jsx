@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import Adminsidebar from '../../Components/AdminSide/Adminsidebar'
+import  { useEffect, useState } from 'react'
 import axios from '../../utils/axiosConfig'
 import {toast} from 'react-toastify'
 import { Link } from 'react-router-dom'
+import BikeOwnerSidebar from '../../Components/BikeOwnerSide/BikeOwnerSidebar'
 
 
 function BikeDetailsOwnerside() {
@@ -40,10 +40,10 @@ function BikeDetailsOwnerside() {
  
     return (
         <div className='w-full flex'>
-            <Adminsidebar />
+            <BikeOwnerSidebar />
             <div className='flex flex-col flex-1 bg-gray-200 font-googleFont'>
                 <h1 className='text-center text-2xl pt-3'>Bike List</h1>
-                <Link to={'/adduser'} className='bg-blue-500 ml-4 w-32 h-6 rounded-md text-center'>ADD NEW BIKE</Link>
+                <Link to={'/addbike'} className='bg-blue-500 ml-4 w-32 h-6 rounded-md text-center'>ADD NEW BIKE</Link>
                 <div className="overflow-x-auto mt-2">
                 <table className="min-w-full divide-y divide-gray-200">
     <thead className="bg-gray-50">

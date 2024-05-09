@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from '../../utils/axiosConfig'
 import {toast} from 'react-toastify'
 import {useNavigate } from 'react-router-dom'
@@ -26,7 +26,7 @@ function AdminLogin() {
       await signInValidationSchema.validate({email,password},{abortEarly : false})
 
       axios.post(`/admin/admin-login`,{email,password})
-    .then((result)=>{
+    .then(()=>{
       toast.success('Login successfully')
       navigate('/admin-dashboard')
     })
@@ -48,33 +48,6 @@ function AdminLogin() {
       setErrors(newErrors)
     }
 
-  //   const trimedemail = email.trim()
-  //   const trimedpassword = password.trim()
-
-  //   if(trimedemail == '' || trimedpassword==''){
-  //     toast.error('Empty input fields');
-  //   }
-  //   else if(!/^[a-zA-Z0-9._-]+@gmail\.com$/.test(trimedemail)){
-  //     toast.error('Please enter a valid gmail address (e.g., example@gmail.com).');
-
-  //   }
-  //   else if(trimedpassword.length==0){
-  //     toast.error('Please enter the password')
-  //   }else{
-  //   axios.post('http://localhost:5001/admin/admin-login',{email:trimedemail,password:trimedpassword},{withCredentials:true})
-  //   .then((result)=>{
-  //     toast.success('Login successfully')
-  //     navigate('/admin-dashboard')
-  //   })
-  //   .catch((err)=>{
-  //     console.log(err.response);
-  //     if (err.response && err.response.data && err.response.data.message) {
-  //       toast.error(err.response.data.message);
-  //     } else {
-  //       toast.error('An error occurred. Please try again later.');
-  //     }
-  //   })
-  // }
   }
   return (
     <div className='bg-green-300 min-h-screen w-full flex flex-col justify-center items-center'>

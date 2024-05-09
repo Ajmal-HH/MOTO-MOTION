@@ -13,7 +13,7 @@ function Header() {
 
   const handleLogout = () =>{
     axios.get('/user-logout')
-    .then((data)=>{
+    .then(()=>{
       toast.success('User Logout!')
       navigate('/')
     })

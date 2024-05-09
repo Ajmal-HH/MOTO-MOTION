@@ -27,3 +27,29 @@ export const signInValidationSchema = Yup.object({
         .trim()
         .required('Please enter the password')
 });
+
+
+export const addBikeValidationSchema = Yup.object({
+    bikeName: Yup.string()
+        .trim()
+        .required('Please enter a bike name'),
+    bikeNO: Yup.string()
+        .trim()
+        .required('Please enter a bike number'),
+    bikeType: Yup.string()
+        .trim()
+        .required('Please enter a bike type'),
+    bikeCC: Yup.number()
+        .required('Please enter a bike cc'),
+    location: Yup.string()
+        .trim()
+        .required('Please enter a bike location'),
+    rent: Yup.number()
+        .required('Please enter a rent amount'),
+    details: Yup.string()
+        .trim()
+        .required('Please enter bike details'),
+    image: Yup.array()
+        .min(3, 'Please select at least three image')
+        .required('Please select bike image')
+});

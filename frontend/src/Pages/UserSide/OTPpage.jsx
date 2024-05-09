@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify';
@@ -34,7 +34,7 @@ function OTPpage() {
       toast.error('Enter valid OTP');
     } else {
       axios.post(`/verifyOTP`, { otp })
-        .then((result) => {
+        .then(() => {
           toast.success('SignUp successful');
           navigate('/login');
         })

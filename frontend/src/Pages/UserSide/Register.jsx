@@ -5,6 +5,9 @@ import { toast } from 'react-toastify';
 import Cookies from 'js-cookie'
 import * as Yup from 'yup'
 import axios from '../../utils/axiosConfig'
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import Header from '../../Components/UserSide/Header';
 
 function Register() {
   const navigate = useNavigate();
@@ -53,7 +56,7 @@ function Register() {
      await validationSchema.validate({name,email,mobile,password}, {abortEarly : false})
 
      axios.post(`/verifyuser`, { name, email, password, mobile })
-     .then((data) => {
+     .then(() => {
        navigate('/otp');
      }).catch((err) => {
        if (err.response && err.response.data && err.response.data.message) {
@@ -75,38 +78,12 @@ function Register() {
         toast.error('An error occurred. Please try again later.');
       }
     }
-
-    // const trimmedName = name.trim();
-    // const trimmedEmail = email.trim();
-    // const trimmedPassword = password.trim();
-
-    // if (trimmedName === '' || trimmedEmail === '' || trimmedPassword === '' || mobile.length === 0) {
-    //   toast.error('Empty input fields');
-    // } else if (trimmedName.length < 3) {
-    //   toast.error('Please enter a valid name (at least 3 characters)');
-    // } else if (!/^[a-zA-Z0-9._-]+@gmail\.com$/.test(trimmedEmail)) {
-    //   toast.error('Please enter a valid gmail address (e.g., example@gmail.com).');
-    // } else if (mobile.length < 10 || mobile.length >= 11) {
-    //   toast.error('Please enter a valid mobile number');
-    // } else if (trimmedPassword.length < 6) {
-    //   toast.error('Please enter at least 6 characters for the password');
-    // } else {
-    //   axios.post('http://localhost:5001/verifyuser', { name: trimmedName, email: trimmedEmail, password: trimmedPassword, mobile }, { withCredentials: true })
-    //     .then((data) => {
-    //       navigate('/otp');
-    //     }).catch((err) => {
-    //       if (err.response && err.response.data && err.response.data.message) {
-    //         toast.error(err.response.data.message);
-    //       } else {
-    //         toast.error('An error occurred. Please try again later.');
-    //       }
-    //     });
-    // }
   };
 
   return (
     <>
       <div className='min-h-screen bg-cover' style={{ backgroundImage: `url(${bgImage})` }}>
+        <Header />
         <div className='flex flex-col items-center'>
           <div className=' bg-gray-600 min-h-[500px] w-[400px] rounded-lg bg-opacity-70 mt-20'>
             <h1 className='text-center font-googleFont font-bold text-2xl mt-4'>SIGNUP</h1>
@@ -155,11 +132,24 @@ function Register() {
               </button>
             </form>
             <div className="flex items-center justify-center mt-2 ml-12 mr-12">
-              <hr className="border-t border-gray-300 w-full" />
+              <hr className="border-t  border-yellow-500 w-full" />
               <span className="px-3 text-white text-xs">OR</span>
-              <hr className="border-t border-gray-300 w-full" />
+              <hr className="border-t  border-yellow-500 w-full" />
             </div>
-            <h1 className='font-googleFont text-lg text-center mt-12'>Already have a account?</h1>
+            <div className='flex justify-center mt-4'>
+              <GoogleLogin
+                onSuccess={credentialResponse => {
+                  const credentialResponseDecoded = jwtDecode(
+                    credentialResponse.credential
+                  )
+                  console.log(credentialResponseDecoded)
+                }}
+                onError={() => {
+                  console.log('Login Failed')
+                }}
+              />
+              </div>
+            <h1 className='font-googleFont text-lg text-center mt-5'>Already have a account?</h1>
             <Link to={'/login'} className='font-googleFont text-lg ml-40 hover:text-red-700 cursor-pointer '>Login Here</Link>
           </div>
         </div>

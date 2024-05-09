@@ -1,5 +1,5 @@
 import express from 'express'
-import {  addNewUser, addbikeOwner, adminAuth, adminEditOwer, adminEdituser, bikeOwnerList, blockOwner, blockUser, loadAdminEditUser, loadAdminOwnerEdit, unblockOwner, unblockUser, userDetails, userList, verifyDocument } from '../Controller/AdminController.js'
+import {  addNewUser, addbikeOwner, adminAuth, adminEditOwer, adminEdituser, bikeOwnerList, blockOwner, blockUser, loadAdminEditUser, loadAdminOwnerEdit, logoutAdmin, unblockOwner, unblockUser, userDetails, userList, verifyDocument } from '../Controller/AdminController.js'
 
 const admin_router = express.Router()
 
@@ -18,5 +18,6 @@ admin_router.get('/admin-loadeditowner',loadAdminOwnerEdit)
 admin_router.post('/admin-editowner', adminEditOwer)
 admin_router.get('/userdetails',userDetails)
 admin_router.get('/verify-document',verifyDocument)
+admin_router.get('/admin-logout',logoutAdmin)
 
 export default admin_router          
