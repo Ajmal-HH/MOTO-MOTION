@@ -3,6 +3,8 @@ import User from '../model/userModel.js'
 import generateToken from '../utils/generateToken.js'
 import bcrypt from 'bcrypt'
 import bikeOwner from '../model/bikeOwnerModel.js'
+import Booking from '../model/bookingModel.js'
+import Bikes from '../model/bikeModel.js'
 
 const securePassword = async(password)=>{
     try {
@@ -41,7 +43,6 @@ const adminAuth = asyncHandler(async(req,res)=>{
                     httpOnly : false,
                     secure : false,          
                     sameSite : "strict",
-                    maxAge : 60000
                 })
                 return res.status(200)
                 .json({message : 'Login Successfully'})
@@ -70,6 +71,14 @@ const userList = asyncHandler(async(req,res)=>{
     console.log(error.message);
    }
 })
+const verifyDocumentList = async (req,res)=>{
+   try {
+    const users = await User.find({ account_status:'verifying document'})
+    res.json(users)
+   } catch (error) {
+    console.log(error.message);
+   }
+}
 
 const bikeOwnerList = async(req,res)=>{
     try {
@@ -260,11 +269,45 @@ const adminEditOwer = async (req,res) =>{
     }
 }
 
+const logoutAdmin = async (req, res) => {
+    res.cookie("jwt-admin", "", {   
+      httpOnly: false,
+      expires: new Date(0),
+    });    
+    res.status(200).json({status : true});
+  }
 
+  const adminBookingList = async(req,res)=>{
+    try {
+        const bookinglist = await Booking.find()
+
+        let bookingsWithBikes = [];
+        for (const item of bookinglist) {
+            let bike = await Bikes.findById(item.bike_id);
+            bookingsWithBikes.push({
+              ...item._doc,  // Include all fields of booking
+              bike,         // Include bike details
+            });
+          }
+        res.json(bookingsWithBikes) 
+    } catch (error) {
+        console.log(error.message);  
+    }
+  }
+
+  const adminBikeList = async(req,res) =>{
+    try {
+        const bikeList = await Bikes.find()
+        res.json(bikeList)
+    } catch (error) {
+        console.log(error.message);
+    }
+  }
 
 export {
     adminAuth,
     userList,
+    verifyDocumentList,
     bikeOwnerList,
     blockUser,
     unblockUser,
@@ -277,5 +320,8 @@ export {
     loadAdminOwnerEdit,
     adminEditOwer,
     userDetails,
-    verifyDocument
+    verifyDocument,
+    adminBookingList,
+    adminBikeList,  
+    logoutAdmin
 }

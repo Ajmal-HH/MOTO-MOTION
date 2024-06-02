@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Link , useNavigate } from 'react-router-dom';
 import Header from '../../Components/UserSide/Header';
 import axios from '../../utils/axiosConfig'
@@ -31,7 +31,7 @@ function BikeOwnerSignup() {
       await signUpValidationSchema.validate({name,email,mobile,password},{abortEarly : false})
       
       axios.post(`/bikeowner/bikeowner-signup`,{bikeowner_name: name, email, password, mobile})
-      .then((result)=>{
+      .then(()=>{
         toast.success('Email verified please login')
         navigate('/bikeowner-login')
       })
@@ -52,36 +52,6 @@ function BikeOwnerSignup() {
       setErrors(newErrors)
     }
 
-
-
-  //   const trimmedName = name.trim();
-  //   const trimmedEmail = email.trim();
-  //   const trimmedPassword = password.trim();
-  
-  //   if (trimmedName === '' || trimmedEmail === '' || trimmedPassword === '' || mobile.length === 0) {
-  //     toast.error('Empty input fields');
-  //   } else if (trimmedName.length < 3) {
-  //     toast.error('Please enter a valid name (at least 3 characters)');
-  //   } else if (!/^[a-zA-Z0-9._-]+@gmail\.com$/.test(trimmedEmail)) {
-  //     toast.error('Please enter a valid gmail address (e.g., example@gmail.com).');
-  //   } else if (mobile.length < 10 || mobile.length >= 11) {
-  //     toast.error('Please enter a valid mobile number');
-  //   } else if (trimmedPassword.length < 6) {
-  //     toast.error('Please enter at least 6 characters for the password');
-  //   }else{
-  //   axios.post('http://localhost:5001/bikeowner/bikeowner-signup',{bikeowner_name: trimmedName, email: trimmedEmail, password: trimmedPassword, mobile},{withCredentials : true})
-  //   .then((result)=>{
-  //     toast.success('Email verified please login')
-  //     navigate('/bikeowner-login')
-  //   })
-  //   .catch((err)=>{
-  //     if (err.response && err.response.data && err.response.data.message) {
-  //       toast.error(err.response.data.message);
-  //     } else {
-  //       toast.error('An error occurred. Please try again later.');
-  //     }
-  //   })
-  // }
   }
   
 

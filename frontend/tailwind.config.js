@@ -10,6 +10,8 @@ export default {
       googleFont : ["Itim","cursive"]
     }
   },
-  plugins: [],
+  // eslint-disable-next-line no-undef
+  plugins: [ require('daisyui'),
+],
 }
 

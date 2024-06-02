@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Adminsidebar from '../../Components/AdminSide/Adminsidebar'
 import { useLocation, useNavigate } from 'react-router-dom';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -23,7 +23,7 @@ function UserDetails() {
                 .then((response) => {
                     setUser(response.data.user); // Update state with user data
                 })
-                .catch((err) => {
+                .catch(() => {
                     toast.error('Error fetching user data');
                 });
         }
@@ -31,11 +31,11 @@ function UserDetails() {
 
     const verifyDocument = () =>{
         axios.get(`/admin/verify-document?userId=${user._id}`)
-        .then((response)=>{
+        .then(()=>{
             toast.success('Document verified')
             navigate('/user-list')
         })
-        .catch((err)=>{
+        .catch(()=>{
             toast.error('Error in verify document');
 
         })

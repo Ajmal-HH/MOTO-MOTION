@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import Adminsidebar from '../../Components/AdminSide/Adminsidebar'
+import  { useEffect, useState } from 'react'
 import axios from '../../utils/axiosConfig'
 import {toast} from 'react-toastify'
 import { Link } from 'react-router-dom'
+import BikeOwnerSidebar from '../../Components/BikeOwnerSide/BikeOwnerSidebar'
 
 
 function BikeDetailsOwnerside() {
@@ -37,13 +37,36 @@ function BikeDetailsOwnerside() {
         }
     }
 
+            //pagination
+            const [currentPage, setCurrentPage] = useState(1)
+            const recordPerPage = 5
+            const lastIndex = currentPage * recordPerPage
+            const firstIndex = lastIndex - recordPerPage
+            const records = bikes.slice(firstIndex, lastIndex)
+            const npage = Math.ceil(bikes.length / recordPerPage)
+            const numbers = [...Array(npage + 1).keys()].slice(1)
+
+            const prePage = () => {
+                if (currentPage !== 1) {
+                    setCurrentPage(currentPage - 1)
+                }
+            }
+            const changeCPage = (id) => {
+                setCurrentPage(id)
+            }
+            const nextPage = () => {
+                if (currentPage !== npage) {
+                    setCurrentPage(currentPage + 1)
+                }
+            }
+
  
     return (
         <div className='w-full flex'>
-            <Adminsidebar />
+            <BikeOwnerSidebar />
             <div className='flex flex-col flex-1 bg-gray-200 font-googleFont'>
                 <h1 className='text-center text-2xl pt-3'>Bike List</h1>
-                <Link to={'/adduser'} className='bg-blue-500 ml-4 w-32 h-6 rounded-md text-center'>ADD NEW BIKE</Link>
+                <Link to={'/addbike'} className='bg-blue-500 ml-4 w-32 h-6 rounded-md text-center'>ADD NEW BIKE</Link>
                 <div className="overflow-x-auto mt-2">
                 <table className="min-w-full divide-y divide-gray-200">
     <thead className="bg-gray-50">
@@ -57,7 +80,7 @@ function BikeDetailsOwnerside() {
         </tr>
     </thead>
     <tbody className="bg-white divide-y divide-gray-200">
-        {bikes.map((bike, index) => (
+        {records.map((bike, index) => (
             <tr key={bike._id}>
                 <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{bike.bike_name}</td>
@@ -95,6 +118,27 @@ function BikeDetailsOwnerside() {
         ))}
     </tbody>
 </table>
+<nav className="mt-4 flex justify-center">
+                        <ul className="pagination flex">
+                            <li className="page-item">
+                                <button onClick={prePage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
+                                    Prev
+                                </button>
+                            </li>
+                            {numbers.map((n, i) => (
+                                <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
+                                    <button onClick={() => changeCPage(n)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
+                                        {n}
+                                    </button>
+                                </li>
+                            ))}
+                            <li className="page-item">
+                                <button onClick={nextPage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
+                                    Next
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
 
                 </div>
             </div>

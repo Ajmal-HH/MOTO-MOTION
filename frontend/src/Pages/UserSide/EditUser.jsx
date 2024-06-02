@@ -1,8 +1,7 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {  useLocation, useNavigate } from 'react-router-dom';
 import bgImage from '../../assets/a.jpg';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import Cookies from 'js-cookie'
 import * as Yup from 'yup'
 import axios from '../../utils/axiosConfig'
 
@@ -12,7 +11,6 @@ function EditUser() {
   const [mobile, setMobile] = useState('');
   const [errors, setErrors] = useState({})
 
-  const token = Cookies.get('jwt')
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -28,7 +26,7 @@ function EditUser() {
     setEmail(email)
     setMobile(mobile)
    })
-   .catch((err)=>{
+   .catch(()=>{
     toast.error('Error to fetching userData')
    })
   },[])
@@ -59,7 +57,7 @@ function EditUser() {
      await validationSchema.validate({name,email,mobile}, {abortEarly : false})
 
      axios.post(`/edituser`, { _id : userId ,name,mobile })
-     .then((response) => {
+     .then(() => {
         toast.success('User data updated!')
         navigate('/userprofile');
      }).catch((err) => {

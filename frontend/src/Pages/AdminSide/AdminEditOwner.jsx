@@ -1,8 +1,7 @@
-import { Link, useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify';
-import Cookies from 'js-cookie'
 
 
 function AdminEditOwner() {
@@ -15,7 +14,6 @@ function AdminEditOwner() {
   const searchParams = new URLSearchParams(location.search);
   const ownerId = searchParams.get('ownerId');
 
-//   const token = Cookies.get('jwt')
   
   useEffect(()=>{
   axios.get(`/admin/admin-loadeditowner?ownerId=${ownerId}`)
@@ -24,7 +22,7 @@ function AdminEditOwner() {
     setMobile(response.data.mobile);
     setEmail(response.data.email);
   })
-  .catch((err)=>{
+  .catch(()=>{
     toast.error('Error to fetch userData')
   })
   },[ownerId])
@@ -33,7 +31,6 @@ function AdminEditOwner() {
     e.preventDefault();
 
     const trimmedName = name.trim();
-    // const trimmedMobile = mobile.trim();
 
     if (trimmedName === ''  || mobile === '') {
       toast.error('Empty input fields');
@@ -43,7 +40,7 @@ function AdminEditOwner() {
       toast.error('Please enter a valid mobile number');
     }  else {
       axios.post(`/admin/admin-editowner`, {_id : ownerId, name: trimmedName,   mobile})
-        .then((data) => {
+        .then(() => {
           toast.success('Owner data updated!!')
           navigate('/bike-owners');
         }).catch((err) => {
