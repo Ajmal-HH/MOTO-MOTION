@@ -30,6 +30,19 @@ import UserDetails from './Pages/AdminSide/UserDetails'
 import UserProtectedRoute from './Routes/UserProtectedRoute'
 import OwnerProtectedRoute from './Routes/OwnerProtectedRoute'
 import AdminProtectedRoute from './Routes/AdminProtectedRoute'
+import ResetPasswordForm from './Pages/UserSide/ResetPasswordForm'
+import SetNewPassword from './Pages/UserSide/SetNewPassword'
+import CheckOut from './Pages/UserSide/CheckOut'
+import BookingSuccess from './Pages/UserSide/BookingSuccess'
+import BookingList from './Pages/BikeOwnerSide/BookingList'
+import UserBookingList from './Pages/UserSide/UserBookingList'
+import AdminBookingList from './Pages/AdminSide/AdminBookingList'
+import VerifyUserDocument from './Pages/AdminSide/VerifyUserDocument'
+import AdminBikeList from './Pages/AdminSide/AdminBikeList'
+import Wallet from './Pages/UserSide/Wallet'
+import Loader from './Components/UserSide/Loader'
+import { Suspense } from 'react'
+import MessageHome from './Pages/Messages/MessageHome'
 
 function App() {
   return (
@@ -37,6 +50,7 @@ function App() {
     {/* <Toaster/> */}
     <ToastContainer />
     <Router>
+        <Suspense fallback={<Loader />}>
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='/signup' element={<Register />}></Route>
@@ -44,10 +58,19 @@ function App() {
         <Route path='/otp' element={<OTPpage />} />
         <Route path='/bikes' element={<Bikes />} ></Route>
         <Route path='/bike-details' element={<BikeDetails />} />
+        <Route path='/reset-password' element={<ResetPasswordForm />} />
+        <Route path='/set-newpassword' element={<SetNewPassword />} />
         <Route element={<UserProtectedRoute />}>
         <Route path='/userprofile' element={<UserProfile />} />
         <Route path='/edit-user' element={<EditUser />} />
+        <Route path='/checkout' element={<CheckOut />} />
+        <Route path='/booking-success' element={<BookingSuccess />} />
+        <Route path='/user-bookinglist' element={<UserBookingList />} />
+        <Route path='/wallet' element={<Wallet />} />
+        <Route path='/message' element={<MessageHome />} />
         </Route>
+
+
 
 
         <Route path='/bikeowner-signup' element={<BikeOwnerSignup />} />
@@ -58,6 +81,7 @@ function App() {
         <Route path='/bikeowner-details' element={<BikeOwnerDetails />} />
         <Route path='/bikeowner-bikedetails' element={<BikeDetailsOwnerside />}/>
         <Route path='/bikeowner-editbike' element={<EditbikeOwner />} />
+        <Route path='/booking-list' element={<BookingList />} />
         </Route>
 
 
@@ -68,12 +92,16 @@ function App() {
        <Route path='/user-details' element={<UserDetails />} />
        <Route path='/bike-owners' element={<BikeOwners />} />
        <Route path='/adduser' element={<AddUser />} />
+       <Route path='/verify-userdocument' element={<VerifyUserDocument />} />
        <Route path='/admin-loadedituser' element={<AdminEdituser />} />
        <Route path='/addowner' element={<AddOwner />} />
        <Route path='/admin-loadeditowner' element={<AdminEditOwner />} />
+       <Route path='/admin-bookinglist' element={<AdminBookingList />} />
+       <Route path='/admin-bikelist' element={<AdminBikeList />} />
        </Route>
        
       </Routes>
+      </Suspense>
     </Router>   
     </>
   )

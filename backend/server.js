@@ -3,6 +3,7 @@ import cors from 'cors';
 import userRouter from './Router/UserRouter.js';
 import bikeOwnerRouter from './Router/BikeOwnerRouter.js'
 import AdminRouter from './Router/AdminRouter.js'
+import MessageRouter from './Router/MessageRouter.js'
 import connectDB from './config/db.js';
 import dotenv from 'dotenv';
 import session, { MemoryStore } from 'express-session';
@@ -28,6 +29,8 @@ app.use(express.urlencoded({extended:true}))
 app.use(cookieparser())
 app.use(express.static('public'))
 
+
+
 // Session Middleware
 app.use(session({
   secret: sessionSecret,
@@ -42,21 +45,19 @@ app.use(cors({
     credentials: true
 }));
 
-//User Routes
+//User Routes  
 app.use('/', userRouter);
-//Bike Owner Routes
+//Bike Owner Routes  
 app.use('/bikeowner',bikeOwnerRouter)
 //Admin Routes
 app.use('/admin',AdminRouter);
+//Message Routes
+app.use('/messages',MessageRouter)
 
-// app.use((res,req,next)=>{
-//   console.log(req);
-//   next();
-// });
-// app.use((err, req, res,next)=>{
-//   console.log(err);
-//   res.json(err)
-// })
+app.use((err,req,res,next)=>{
+  console.log("Error in middleware" , err)
+})
+
 
 
 app.listen(PORT, () => console.log('Server is running...'));

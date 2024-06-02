@@ -15,8 +15,8 @@ function Login() {
   const token = Cookies.get('jwt')
 
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('test@gmail.com')
+  const [password, setPassword] = useState('112233')
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
@@ -65,6 +65,7 @@ function Login() {
               <label htmlFor="name" className='font-googleFont text-lg'>Email</label>
               <input type="email"
                 placeholder='Enter the email'
+                value={email}
                 className='block w-80 h-8 rounded-xl pl-2'
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -72,6 +73,7 @@ function Login() {
               <label htmlFor="name" className='font-googleFont text-lg'>Password</label>
               <input type="password"
                 placeholder='Enter Password'
+                value={password}
                 className='block w-80 h-8 rounded-xl pl-2'
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -90,8 +92,20 @@ function Login() {
               <GoogleLogin
                 onSuccess={credentialResponse => {
                   const credentialResponseDecoded = jwtDecode(
-                    credentialResponse.credential
+                    credentialResponse.credential,
                   )
+                  axios.post('/google-auth',credentialResponseDecoded)
+                  .then(()=>{
+                    navigate('/')
+                    toast.success('Login success')
+                  })
+                  .catch((err)=>{
+                    if (err.response && err.response.data && err.response.data.message) {
+                      toast.error(err.response.data.message);
+                    } else {
+                      toast.error('An error occurred. Please try again later.');
+                    }
+                  })
                   console.log(credentialResponseDecoded)
                 }}
                 onError={() => {
@@ -99,7 +113,7 @@ function Login() {
                 }}
               />
               </div>
-            <p className='font-googleFont text-center mt-7  text-white'>Forgot Password?</p>
+            <Link to={'/reset-password'} className='font-googleFont text-center mt-7 ml-36  text-white'>Forgot Password?</Link>
             <h1 className='font-googleFont text-lg text-center'> {'Don\'t have an account?'}</h1>
             <Link to={'/signup'} className='font-googleFont text-lg ml-40  hover:text-red-700 cursor-pointer '>SignUp Here</Link>
           </div>

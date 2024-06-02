@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
     },
     mobile : {
         type : Number,
-        required : true
+        // required : true
     },
     isAdmin : {
         type : Boolean,
@@ -37,6 +37,10 @@ const userSchema = mongoose.Schema({
     document : {
         type : Array,
         default : null
+    },
+    wallet : {
+        type : Number,
+        default : 0
     }
 })
 

@@ -8,7 +8,7 @@ const generateOtp = () => {
 };
 
 //send mail
-export const sendMail = async (email, name,req) => {
+export const sendMail = async (email,req) => {
   try {
     const otp = generateOtp();
     console.log(otp);

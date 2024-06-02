@@ -1,5 +1,5 @@
 import  { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify';
 
@@ -9,7 +9,10 @@ function OTPpage() {
   const [otp, setOTP] = useState('');
   const [showCounter, setShowCounter] = useState(true); // Initially set to true
   const [counter, setCounter] = useState(59); // Counter starts at 59 seconds
-
+  const location = useLocation()
+  const purpose = location.state?.purpose
+  
+  
   useEffect(() => {
     if (!showCounter) return; // Stop countdown if counter is hidden
 
@@ -33,8 +36,18 @@ function OTPpage() {
     if (otp.length < 4) {
       toast.error('Enter valid OTP');
     } else {
-      axios.post(`/verifyOTP`, { otp })
-        .then(() => {
+      if(purpose === 'forgot-password'){
+        axios.post('/verify-forgOTP',{otp})
+          .then(() => {
+              navigate('/set-newpassword')   
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message);
+            console.error(err);
+          });
+      }else{
+        axios.post(`/verifyOTP`, { otp })
+        .then(()=>{
           toast.success('SignUp successful');
           navigate('/login');
         })
@@ -42,6 +55,7 @@ function OTPpage() {
           toast.error(err.response.data.message);
           console.error(err);
         });
+      }
     }
   };
 

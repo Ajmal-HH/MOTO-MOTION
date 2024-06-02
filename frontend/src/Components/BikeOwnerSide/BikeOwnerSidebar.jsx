@@ -17,7 +17,7 @@ function BikeOwnerSidebar() {
         <Link className='pt-5 '>DASHBOARD</Link>
         <Link to={'/bikeowner-details'} className='pt-5 '>DETAILS</Link>
         <Link to={'/bikeowner-bikedetails'} className='pt-5 '>BIKE DETAILS</Link>
-        <Link className='pt-5 '>BOOKINGS</Link>
+        <Link to={'/booking-list'} className='pt-5 '>BOOKINGS</Link>
         <Link className='pt-5 '>CHATS</Link>
       </div>
       <div onClick={handleLogout} className=' rounded-lg w-full h-10 flex justify-center items-center mt-2 border border-red-500 text-red-500  hover:bg-red-500 hover:text-white cursor-pointer'>

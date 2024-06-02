@@ -1,5 +1,5 @@
-import banner from '../../assets/bike2.jpg'
-import banner1 from '../../assets/bike7.jpg'
+import banner1 from '../../assets/banner2.jpg'
+import banner2 from '../../assets/banner3.jpg'
 import bike from '../../assets/gt 650.jpg'
 import trip1 from '../../assets/trip1.webp'
 import trip2 from '../../assets/trip2.jpg'
@@ -9,15 +9,12 @@ import trip5 from '../../assets/trip5.jpg'
 import trip6 from '../../assets/trip6.webp'
 import trip7 from '../../assets/trip7.jpg'
 import trip8 from '../../assets/trip8.jpg'
-
 import Header from '../../Components/UserSide/Header'
-
-
 
 function Homepage() {
   return (
     <div>
-    <div className='w-full h-[450px] bg-cover' style={{backgroundImage: `url(${banner})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+    <div className='w-full h-[450px] bg-cover ' style={{backgroundImage: `url(${banner1})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
  <Header />
 </div>
      <div className='w-full bg-white h-36 flex flex-row'>
@@ -46,7 +43,7 @@ function Homepage() {
          </div>
      </div>
 
-   <div className='bg-slate-400 w-full h-[450px] flex justify-end' style={{backgroundImage: `url(${banner1})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+   <div className='bg-slate-400 w-full h-[450px] flex justify-end' style={{backgroundImage: `url(${banner2})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
      <div className='bg-white w-72 h-60 mr-32 mt-16 rounded-2xl '>
          <h1 className='mt-2 font-bold font-googleFont text-lg text-center'>SEARCH YOU NEXT RIDE</h1>
          <form className='ml-5'>

@@ -4,6 +4,8 @@ import Bikes from '../model/bikeModel.js'
 import generateToken from '../utils/generateToken.js'
 import { sendMail } from '../utils/nodemailer.js'
 import bcrypt from 'bcrypt'
+import Booking from '../model/bookingModel.js'
+import jwt from 'jsonwebtoken'
 
 
 const securePassword = async(password)=>{
@@ -50,7 +52,7 @@ const verifyUser = asyncHandler(async (req, res) => {
             res.status(400).json({message:'User is already exists..'})
         }else{
             req.session.userData = req.body
-            sendMail(email,name,req)
+            sendMail(email,req)
             res.status(200)
             .json({status:true})      
     } 
@@ -125,11 +127,10 @@ const verifyLogin = asyncHandler(async(req,res)=>{
             if(passwordMatch){
                 if(!userData?.isBlocked ){
                     const token = generateToken(userData._id);
-                    res.cookie('jwt',token,{
-                        httpOnly : false,
-                        secure : false,
-                        sameSite : "strict",
-                    })
+                    res.cookie('jwt', token, {
+                        httpOnly: false,
+                        secure: false,
+                    });
                      return res.status(200)
                       .json({status : true})
                 }else{
@@ -146,12 +147,12 @@ const verifyLogin = asyncHandler(async(req,res)=>{
         }
     
     } catch (error) {
-        console.log('>>>');
         console.log(error.message);
     }
 
     
 })
+
 
 const loadBikes = asyncHandler(async(req,res)=>{
     try {
@@ -159,6 +160,7 @@ const loadBikes = asyncHandler(async(req,res)=>{
         res.json(bikes)
     } catch (error) {
         console.log(error.message);  
+        res.status(500)
     }
 })
  
@@ -193,7 +195,6 @@ const addDocument = async(req,res)=>{
 
 const loadEditUser = async (req,res) =>{
     const userId = req.query.userId
-    console.log(userId,"111");
     const user = await User.findOne({_id : userId})
     res.json(user)
 }
@@ -229,6 +230,180 @@ const logoutUser = asyncHandler(async (req, res) => {
   });   
 
 
+
+  const verifyEmailForgotPass = async (req,res) =>{
+    const {email} =  req.body
+    const user = await User.findOne({email})
+    if(user){
+        req.session.forgUserId = user._id 
+        sendMail(email,req)
+        res.status(200)
+        .json({status : true})
+    }else{  
+        res.status(401)  
+        .json({message : 'Unauthorized user.'})
+    }        
+  }
+
+  const verifyForgPasOTP = async (req,res)=>{
+    const enteredOTP = req.body.otp
+    const sessionOTP = req.session.otp
+    const otp = parseInt(enteredOTP)
+    if(otp === sessionOTP){
+        res.status(200)
+        .json({status : true})
+    }else{
+        res.status(400)
+        .json({message : 'Invalid OTP'})
+    }
+  }
+
+  const setNewPassword = async (req,res) =>{
+        try {
+            const {password} = req.body
+            const userId =  req.session.forgUserId
+            const spassword = await securePassword(password)
+            const user = await User.findByIdAndUpdate(userId,
+              {  $set : {
+                    password : spassword
+              } } )
+              if(user){   
+                res.status(200)
+                .json({status : true})
+              }else{
+                res.status(400)
+                json({message:'Failed update user password please try again later'})
+              }
+        } catch (error) {
+            console.log(error.message);
+        }
+  }
+
+  const googleAuth =async (req,res)=>{
+    const {name,email} = req.body
+    const userData = await User.findOne({email})
+    if(userData){
+        req.session.userId = userData._id
+        if(!userData?.isBlocked ){
+            const token = generateToken(userData._id);
+            res.cookie('jwt',token,{
+                httpOnly : false,
+                secure : false,
+                sameSite : "strict",
+            })
+               res.status(200)
+              .json({status : true})
+        }else{
+            res.status(403)
+            .json({message : 'User is blocked by admin'})
+        }
+    }else{
+        const password = process.env.USER_PASSWORD
+        const user = new User({
+            name,
+            email,
+            password
+        })
+        const userDetails =  await user.save()
+        if(userDetails){
+            req.session.userId = userDetails._id
+            const token = generateToken(userDetails._id);
+            res.cookie('jwt',token,{
+                httpOnly : false,
+                secure : false,
+                sameSite : "strict",
+            })
+            res.status(200)
+            .json({status : true})
+        }else{
+            res.status(400)
+            json({message:'Authentication failed'})
+        }
+    }
+  }
+
+
+const userBookingList = async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const bookinglist = await Booking.find({ user_id: userId });
+  
+      let bookingsWithBikes = [];
+      for (const item of bookinglist) {
+        let bike = await Bikes.findById(item.bike_id);
+        bookingsWithBikes.push({
+          ...item._doc,  // Include all fields of booking
+          bike,         // Include bike details
+        });
+      }
+  
+      res.json(bookingsWithBikes);
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+ 
+
+  const filterBikes = async (req,res) =>{
+    try {
+        const { price, location, biketype } = req.query;
+        let query = {};
+
+        if (location) query.location = location;
+        if (biketype) query.bike_type = biketype;
+
+        let bikes;
+        if (price === 'Low-High') {
+            bikes = await Bikes.find(query).sort({ price: 1 });
+        } else if (price === 'High-Low') {
+            bikes = await Bikes.find(query).sort({ price: -1 });
+        } else {
+            bikes = await Bikes.find(query);
+        }
+
+        res.json(bikes);
+    } catch (error) {
+        console.error(error);
+        res.status(500)
+    }
+}
+
+const bikeReview = async(req,res) =>{
+    try {
+        const {review,bikeId} = req.body
+        const userId = req.session.userId
+        const user = await User.findOne({_id : userId})
+        const userReview = {
+            username: user.name,
+            review: review
+        };
+        const bike = await Bikes.findByIdAndUpdate(bikeId,
+            { $push: { reviews: userReview } },
+            { new: true });
+
+            res.status(200)
+            .json({message: 'Review added successfully', username: user.name});
+  
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+  
+const wallet = async (req,res) =>{
+    try {
+        const userId = req.session.userId
+        const user = await User.findOne({_id : userId})
+        res.json(user.wallet)
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+  
+
+
 export { 
     verifyUser,
     resendOTP,
@@ -239,8 +414,14 @@ export {
     bikeDetails,
     userProfile,
     addDocument,
-    loadEditUser,
-    editUser
-    
-
+    loadEditUser, 
+    editUser,
+    verifyEmailForgotPass,
+    verifyForgPasOTP,
+    setNewPassword,
+    googleAuth,
+    userBookingList,
+    filterBikes,
+    bikeReview,
+    wallet
 }

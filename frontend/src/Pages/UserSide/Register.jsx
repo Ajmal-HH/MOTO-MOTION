@@ -34,6 +34,7 @@ function Register() {
 
   const validationSchema =  Yup.object({
     name : Yup.string()
+              .matches(/^[a-zA-Z]+(?:\s+[a-zA-Z]+)*$/, 'Please enter a name containing only alphabetic characters.')
               .trim()
               .required('Name is required')
               .min(3,"Name must be atleast 3 characters"),
@@ -142,6 +143,18 @@ function Register() {
                   const credentialResponseDecoded = jwtDecode(
                     credentialResponse.credential
                   )
+                  axios.post('/google-auth',credentialResponseDecoded)
+                  .then(()=>{
+                    navigate('/')
+                    toast.success('Login success')
+                  })
+                  .catch((err)=>{
+                    if (err.response && err.response.data && err.response.data.message) {
+                      toast.error(err.response.data.message);
+                    } else {
+                      toast.error('An error occurred. Please try again later.');
+                    }
+                  })
                   console.log(credentialResponseDecoded)
                 }}
                 onError={() => {

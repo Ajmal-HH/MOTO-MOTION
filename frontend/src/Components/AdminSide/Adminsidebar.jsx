@@ -18,7 +18,8 @@ function Adminsidebar() {
     <Link className='pt-5 '>DASHBOARD</Link>
     <Link to={'/user-list'} className='pt-5 '>USERS</Link>
     <Link to={'/bike-owners'} className='pt-5 '>BIKE OWNERS</Link>
-    <Link className='pt-5 '>BIKES</Link>
+    <Link to={'/admin-bookinglist'} className='pt-5 '>BOOKINGS</Link>
+    <Link to={'/admin-bikelist'} className='pt-5 '>BIKES</Link>
     <Link className='pt-5 '>COUPONS</Link>
 </div>
 <div onClick={handleLogout} className=' rounded-lg w-full h-10 flex justify-center items-center mt-2 border border-red-500 text-red-500  hover:bg-red-500 hover:text-white cursor-pointer'>

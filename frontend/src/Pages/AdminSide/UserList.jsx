@@ -10,7 +10,7 @@ import Cookies from 'js-cookie'
 function UserList() {
     const token = Cookies.get('jwt-admin')
     const [users, setUsers] = useState([])
-    const navigate = useNavigate()
+    const navigate = useNavigate() 
 
     //pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -34,7 +34,7 @@ function UserList() {
             .catch(error => {
                 console.error('Error fetching user details:', error);
             });
-    }, []);
+    },[navigate,token]);
 
     const handleBlock = async (userId) => {
         try {
@@ -58,7 +58,7 @@ function UserList() {
             await axios.get(`/admin/unblockUser?id=${userId}`);
             const updatedUser = users.map(users => {
                 if (users._id === userId) {
-                    return { ...users, isBlocked: false };
+                    return { ...users, isBlocked : false };
                 }
                 return users;
             });
@@ -89,7 +89,10 @@ function UserList() {
             <Adminsidebar />
             <div className='flex flex-col flex-1 bg-gray-200 font-googleFont'>
                 <h1 className='text-center text-2xl pt-3'>Customers</h1>
+                <div className='flex'>
                 <Link to={'/adduser'} className='bg-blue-500 ml-4 w-32 h-6 rounded-md text-center'>ADD NEW USER</Link>
+                <Link to={'/verify-userdocument'} className='bg-blue-500 ml-4 w-52 h-6 rounded-md text-center'>VERIFY USER DOCUMENT</Link>
+                </div>
                 <div className="overflow-x-auto mt-2">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
