@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react'
 import banner1 from '../../assets/banner2.jpg'
 import banner2 from '../../assets/banner3.jpg'
-import bike from '../../assets/gt 650.jpg'
 import trip1 from '../../assets/trip1.webp'
 import trip2 from '../../assets/trip2.jpg'
 import trip3 from '../../assets/trip3.jpeg'
@@ -9,9 +9,20 @@ import trip5 from '../../assets/trip5.jpg'
 import trip6 from '../../assets/trip6.webp'
 import trip7 from '../../assets/trip7.jpg'
 import trip8 from '../../assets/trip8.jpg'
+import Footer from '../../Components/UserSide/Footer'
 import Header from '../../Components/UserSide/Header'
+import axios from '../../utils/axiosConfig'
+import { Link } from 'react-router-dom'
 
 function Homepage() {
+    const [bikes,setBikes] = useState([])
+    
+    useEffect(()=>{
+        axios.get('/load-home')
+        .then((response)=>{
+            setBikes(response.data)
+        })
+    })
   return (
     <div>
     <div className='w-full h-[450px] bg-cover ' style={{backgroundImage: `url(${banner1})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
@@ -66,40 +77,31 @@ function Homepage() {
              className='h-8 ml-1 bg-[#D9D9D9] rounded-r-md pl-2'
              />
              <div className='flex justify-center mt-5 mr-5'>
-             <button className='bg-[#FFB016] font-googleFont font-bold  rounded-2xl w-20 h-7 text-center '>SEARCH</button>
+             <div  className='bg-[#FFB016] font-googleFont font-bold  rounded-2xl w-20 h-7 text-center '>SEARCH</div>
              </div>
          </form>
      </div>
    </div>
-   <div className='bg-[#E8E488] w-full h-56 flex justify-between '>
-     <div className='bg-white w-52 h-52 mt-2 ml-36 rounded-lg flex flex-col items-center '>
+   <div className='bg-[#E8E488] w-full h-56 flex justify-between'>
+   {
+    bikes.slice(0, 4).map((bike, index) => (
+        <div key={index} className='bg-white w-52 h-52 mt-2 ml-20 mr-20 rounded-lg flex flex-col items-center'>
+            <div className='bg-white w-36 h-36 rounded-lg mt-2 border border-gray-500 flex items-center justify-center'>
+                <img src={bike.image[0]} alt={bike.bike_name} className='max-w-full rounded-lg max-h-full'/>
+            </div>
+            <h1 className='font-googleFont mt-1'>{bike.bike_name}</h1>
+            <Link to={`/bike-details?bikeId=${bike._id}`} className='bg-[#FFB016] font-googleFont rounded-2xl w-20 h-5 flex items-center justify-center '>Book Now</Link>
+        </div>
+    ))
+}
+
+     {/* <div className='bg-white w-52 h-52 mt-2 mr-36 rounded-lg flex flex-col items-center '>
      <div className='bg-white w-36 h-36 rounded-lg mt-2 border border-gray-500 flex items-center justify-center'>
      <img src={bike} alt="" />
      </div>
          <h1 className='font-googleFont'>hello</h1>
          <button className='bg-[#FFB016] font-googleFont rounded-2xl w-20 h-5 flex items-center justify-center '>Book Now</button>
-     </div>
-     <div className='bg-white w-52 h-52 mt-2  rounded-lg flex flex-col items-center '>
-     <div className='bg-white w-36 h-36 rounded-lg mt-2 border border-gray-500 flex items-center justify-center'>
-     <img src={bike} alt="" />
-     </div>
-         <h1 className='font-googleFont'>hello</h1>
-         <button className='bg-[#FFB016] font-googleFont rounded-2xl w-20 h-5 flex items-center justify-center '>Book Now</button>
-     </div>
-     <div className='bg-white w-52 h-52 mt-2  rounded-lg flex flex-col items-center '>
-     <div className='bg-white w-36 h-36 rounded-lg mt-2 border border-gray-500 flex items-center justify-center'>
-     <img src={bike} alt="" />
-     </div>
-         <h1 className='font-googleFont'>hello</h1>
-         <button className='bg-[#FFB016] font-googleFont rounded-2xl w-20 h-5 flex items-center justify-center '>Book Now</button>
-     </div>
-     <div className='bg-white w-52 h-52 mt-2 mr-36 rounded-lg flex flex-col items-center '>
-     <div className='bg-white w-36 h-36 rounded-lg mt-2 border border-gray-500 flex items-center justify-center'>
-     <img src={bike} alt="" />
-     </div>
-         <h1 className='font-googleFont'>hello</h1>
-         <button className='bg-[#FFB016] font-googleFont rounded-2xl w-20 h-5 flex items-center justify-center '>Book Now</button>
-     </div>
+     </div> */}
    </div>
    <div className='w-full h-[600px] bg-white'>
      <div className='w-full h-24 '>
@@ -143,6 +145,9 @@ function Homepage() {
              <h1 className='font-bold text-xl'>Seamless Booking</h1>
          </div>
      </div>
+   </div>
+   <div className='mt-16'>
+   <Footer />
    </div>
  </div>
   )

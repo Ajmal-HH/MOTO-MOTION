@@ -1,12 +1,27 @@
+
+
+
+
+
 import { useEffect, useState } from "react";
 import Header from "../../Components/UserSide/Header";
 import axios from '../../utils/axiosConfig';
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import Pagination from "../../Components/All/Pagination";
+import Swal from "sweetalert2";
+import Footer from "../../Components/UserSide/Footer";
+import { MdMarkUnreadChatAlt } from "react-icons/md";
+import { FaStar } from "react-icons/fa";
+
 
 
 function UserBookingList() {
   const [userBookingList, setUserBookingList] = useState([]);
+  const [rating, setRating] = useState(null);
+  const [hover, setHover] = useState(null);
+  const [review, setReview] = useState('');
+
 
   // Helper function to format date
   const formatDate = (isoDate) => {
@@ -15,22 +30,37 @@ function UserBookingList() {
     return date.toLocaleDateString(undefined, options);
   };
 
-  const cancelBooking = (bookingId) => {
-    try {
-        axios.get(`/cancel-booking?bookingId=${bookingId}`)
-        const updatedBookingList = userBookingList.map(booking => {
+
+
+  const handleClick = (bookingId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "No",
+      confirmButtonText: "Yes, cancel it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          axios.get(`/cancel-booking?bookingId=${bookingId}`)
+          const updatedBookingList = userBookingList.map(booking => {
             if (booking._id === bookingId) {
-                return { ...booking, booking_status : 'canceled' };
+              return { ...booking, booking_status: 'canceled' };
             }
             return booking;
-        });
-        setUserBookingList(updatedBookingList);
-        toast.success('Booking Canceled!');
-    } catch (error) {
-        console.error('Error cancel booking:', error);
-        toast.error('Failed to cancel booking');
-    }
-}
+          });
+          setUserBookingList(updatedBookingList);
+          toast.success('Booking Canceled!');
+        } catch (error) {
+          console.error('Error cancel booking:', error);
+          toast.error('Failed to cancel booking');
+        }
+      }
+    });
+  }
 
   useEffect(() => {
     axios.get('/user-bookinglist')
@@ -43,39 +73,40 @@ function UserBookingList() {
       });
   }, []);
 
-   // Pagination
-   const [currentPage, setCurrentPage] = useState(1);
-   const recordPerPage = 5;
-   const lastIndex = currentPage * recordPerPage;
-   const firstIndex = lastIndex - recordPerPage;
-   const records = userBookingList.slice(firstIndex, lastIndex);
-   const npage = Math.ceil(userBookingList.length / recordPerPage);
-   const numbers = [...Array(npage + 1).keys()].slice(1);
 
-   const prePage = () => {
-       if (currentPage !== 1) {
-           setCurrentPage(currentPage - 1);
-       }
-   };
-   const changeCPage = (id) => {
-       setCurrentPage(id);
-   };
-   const nextPage = () => {
-       if (currentPage !== npage) {
-           setCurrentPage(currentPage + 1);
-       }
-   };
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Items per page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const records = userBookingList.slice(indexOfFirstItem, indexOfLastItem);
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleReview = (bikeId) => {
+    axios.post('/bike-review', { review, bikeId })
+      .then((response) => {
+        const {message} = response.data
+        toast.success(message);
+        setReview('');
+      })
+      .catch((error) => {
+        console.log('Error adding review:', error);
+        toast.error('Failed to add review. Please try again later.');
+      });
+  };
+
 
   return (
     <div className="font-googleFont  bg-gray-200">
       <Header />
       <div className=' pt-24  ml-2  flex'>
         <Link to={'/userprofile'} className='bg-yellow-500 ml-4 w-32 h-6 rounded-md text-center'>&larr; Back</Link>
-        </div>
+      </div>
       <div className="w-full min-h-screen mt-5">
         {userBookingList.length > 0 ? (
           records.map((booking, index) => (
-            <div key={index} className="w-12/12 m-5 border border-gray-400 h-52 rounded-xl flex bg-white">
+            <div key={index} className="w-12/12 m-5 border border-gray-400 h-96 rounded-xl flex bg-white">
               <div className="w-60 h-[180px] rounded-md mt-3 ml-3 object-cover bg-pink-300">
                 {booking && booking.bike.image && booking.bike?.image.length > 0 && <img src={`${booking.bike.image[0]}`} className="object-cover w-full h-full rounded-lg " alt="Bike Image" />
                 }
@@ -91,27 +122,65 @@ function UserBookingList() {
                 </div>
                 <p className="mt-2">PickUp Location: {booking.bike.location}</p>
                 <p className="mt-2">Booking status: {booking.booking_status}</p>
+                <div className='flex  mt-5'>
+                {[...Array(5)].map((star, index) => {
+                  const currentRating = index + 1;
+                  return (
+                    <label key={index}>
+                      <input
+                        type="radio"
+                        name='rating'
+                        value={currentRating}
+                        onClick={() => setRating(currentRating)}
+                      />
+                      <FaStar
+                        className='cursor-pointer'
+                        size={35}
+                        color={currentRating <= (hover || rating) ? '#ffc107' : '#e4e5e9'}
+                        onMouseEnter={() => setHover(currentRating)}
+                        onMouseLeave={() => setHover(null)}
+                      />
+                    </label>
+                  );
+                })}
               </div>
-                {/* <div className="rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
+              <div className='flex flex-col mt-5 '>
+                <label>Add your review</label>
+                <input
+                  type="text"
+                  placeholder='Add your review'
+                  value={review}
+                  onChange={(e) => setReview(e.target.value)}
+                  className='w-96 h-20 pl-2 border border-yellow-500'
+                />
+                <button onClick={()=>handleReview(booking.bike_id)} className='w-28 h-9 mt-2 bg-yellow-500 rounded-md'>ADD REVIEW</button>
+              </div>
+              </div>
+              {/* <div className="rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
                   <h1>Cancel Booking</h1>
                 </div> */}
-             <div className="w-40 h-full mr-10 ml-auto flex justify-center items-center">
-  {booking && booking.booking_status === 'canceled' ? (
-    <div className='rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-red-300 text-red-400 hover:bg-red-300 hover:text-white'>
-      <h1>Canceled</h1>
-    </div>
-  ) : (
-    booking && booking.booking_status === 'confirmed' ? (
-      <div onClick={() => cancelBooking(booking._id)} className='rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer'>
-        <h1>Cancel</h1>
-      </div>
-    ) : (
-      <div className='rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-yellow-500  hover:bg-yellow-300 '>
-        <h1>{booking.booking_status}</h1>
-      </div>
-    )
-  )}
-</div>
+              <div className="w-40 h-full mr-10 ml-auto flex justify-center items-center flex-col">
+                {booking && booking.booking_status === 'canceled' ? (
+                  <div className='rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-red-300 text-red-400 hover:bg-red-300 hover:text-white'>
+                    <h1>Canceled</h1>
+                  </div>
+                ) : (
+                  booking && booking.booking_status === 'confirmed' ? (
+                    <div onClick={() => handleClick(booking._id)} className='rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer'>
+                      <h1>Cancel</h1>
+                    </div>
+                  ) : (
+                    <div className='rounded-lg w-full h-7 flex justify-center items-center mt-2 border border-yellow-500  hover:bg-yellow-300 '>
+                      <h1>{booking.booking_status}</h1>
+                    </div>
+                  )
+                )}
+                <Link
+                  to={`/chat?recieverId=${booking.bikeOwner_id}&senderId=${booking.user_id}`}
+                  className="bg-yellow-500 mt-2 w-24 h-6 flex items-center pl-2 rounded-md cursor-pointer">
+                  <MdMarkUnreadChatAlt />Connect
+                </Link>
+              </div>
 
             </div>
           ))
@@ -124,27 +193,15 @@ function UserBookingList() {
             </Link>
           </div>
         )}
-      <nav className="mt-4 flex justify-center">
-                        <ul className="pagination flex">
-                            <li className="page-item">
-                                <button onClick={prePage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
-                                    Prev
-                                </button>
-                            </li>
-                            {numbers.map((n, i) => (
-                                <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
-                                    <button onClick={() => changeCPage(n)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
-                                        {n}
-                                    </button>
-                                </li>
-                            ))}
-                            <li className="page-item">
-                                <button onClick={nextPage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
-                                    Next
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
+        <Pagination
+          itemsPerPage={itemsPerPage}
+          totalItems={userBookingList.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />
+      </div>
+      <div className='mt-16'>
+        <Footer />
       </div>
     </div>
   );

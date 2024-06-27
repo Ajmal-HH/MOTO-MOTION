@@ -4,6 +4,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom';
+import Footer from '../../Components/UserSide/Footer';
 
 
 
@@ -15,7 +16,6 @@ function UserProfile() {
     const [frontDoc, setFrontDoc] = useState()
     const [backDoc, setBackDoc] = useState()
 
-    console.log(frontDoc, "123");
 
     useEffect(() => {
         axios.get('/userprofile')
@@ -26,7 +26,7 @@ function UserProfile() {
                 navigate('/')
                 console.log('Error to fetch user data');
             })
-    }, [documentUpload,navigate])
+    }, [documentUpload, navigate])
 
     const handleDocument = (e) => {
         e.preventDefault()
@@ -111,7 +111,7 @@ function UserProfile() {
                         <Link to={`/edit-user?userId=${user?._id}`} className='w-24 h-6 bg-yellow-500 rounded-lg mt-3 text-center'>Edit profile</Link>
                     </div>
                     <div className='w-72 h-48 mt-2 rounded-xl  flex flex-col  items-center'>
-                    <Link to={'/wallet'} className=' rounded-lg w-full h-10 flex justify-center items-center mt-2 border border-gray-500'>
+                        <Link to={'/wallet'} className=' rounded-lg w-full h-10 flex justify-center items-center mt-2 border border-gray-500'>
                             <h1>WALLET</h1>
                         </Link>
                         <Link to={'/user-bookinglist'} className=' rounded-lg w-full h-10 flex justify-center items-center mt-2 border border-gray-500'>
@@ -181,7 +181,7 @@ function UserProfile() {
                                                 backDoc ? (
                                                     // <img src={backDoc} alt="" />
                                                     <div className="w-full h-56 rounded-lg overflow-hidden bg-cover bg-center" style={{ backgroundImage: `url(${backDoc})` }}>
-                                                </div>
+                                                    </div>
                                                 ) : (
                                                     <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-56 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-400 dark:bg-gray-200 hover:bg-gray-100 dark:border-gray-600">
                                                         <div className="flex flex-col items-center justify-center pt-4 pb-5">
@@ -217,8 +217,11 @@ function UserProfile() {
                 </div>
 
 
-
             </div>
+                <div>
+                <Footer />
+            </div>
+           
         </div>
     )
 }

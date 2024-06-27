@@ -2,6 +2,7 @@ import BikeOwnerSidebar from "../../Components/BikeOwnerSide/BikeOwnerSidebar";
 import { useEffect, useState } from "react";
 import axios from '../../utils/axiosConfig';
 import { toast } from 'react-toastify';
+import Pagination from "../../Components/All/Pagination";
 
 function BookingList() {
     const [bookingList, setBookingList] = useState([]);
@@ -14,7 +15,7 @@ function BookingList() {
             .catch(() => {
                 toast.error('Error fetching bike details');
             });
-    }, []);
+    }, []); 
 
     // Helper function to format date
     const formatDate = (isoDate) => {
@@ -41,28 +42,16 @@ function BookingList() {
             });
     };
 
-    // Pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const recordPerPage = 5;
-    const lastIndex = currentPage * recordPerPage;
-    const firstIndex = lastIndex - recordPerPage;
-    const records = bookingList.slice(firstIndex, lastIndex);
-    const npage = Math.ceil(bookingList.length / recordPerPage);
-    const numbers = [...Array(npage + 1).keys()].slice(1);
 
-    const prePage = () => {
-        if (currentPage !== 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-    const changeCPage = (id) => {
-        setCurrentPage(id);
-    };
-    const nextPage = () => {
-        if (currentPage !== npage) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
+    //pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Items per page
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const records = bookingList.slice(indexOfFirstItem, indexOfLastItem);
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
 
     return (
         <div className='w-full flex'>
@@ -119,27 +108,12 @@ function BookingList() {
                             ))}
                         </tbody>
                     </table>
-                    <nav className="mt-4 flex justify-center">
-                        <ul className="pagination flex">
-                            <li className="page-item">
-                                <button onClick={prePage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
-                                    Prev
-                                </button>
-                            </li>
-                            {numbers.map((n, i) => (
-                                <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
-                                    <button onClick={() => changeCPage(n)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
-                                        {n}
-                                    </button>
-                                </li>
-                            ))}
-                            <li className="page-item">
-                                <button onClick={nextPage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
-                                    Next
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
+                    <Pagination
+                        itemsPerPage={itemsPerPage}
+                        totalItems={bookingList.length}
+                        paginate={paginate}
+                        currentPage={currentPage}
+                    />
                 </div>
             </div>
         </div>

@@ -21,6 +21,7 @@ function Wallet() {
       <h1 className="font-bold text-3xl">{wallet}</h1>
         <Link to={'/userprofile'} className='bg-yellow-500 mt-5 w-32 h-6 rounded-md text-center'>&larr; Back</Link>
       </div>
+    
     </div>
   )
 }

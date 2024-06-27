@@ -3,6 +3,8 @@ import Header from '../../Components/UserSide/Header';
 import axios from '../../utils/axiosConfig';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Pagination from '../../Components/All/Pagination';
+import Footer from '../../Components/UserSide/Footer';
 
 function Bikes() {
     const [bikes, setBikes] = useState([]);
@@ -19,6 +21,7 @@ function Bikes() {
         } else {
             fetchInitialBikes();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     const fetchInitialBikes = () => {
@@ -51,6 +54,15 @@ function Bikes() {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
     };
+
+    //pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(16); // Items per page
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const records = bikes.slice(indexOfFirstItem, indexOfLastItem);
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <div className='font-googleFont'>
@@ -114,9 +126,9 @@ function Bikes() {
             </div>
 
             <div className='flex flex-wrap justify-start'>
-                {bikes.filter((item) => {
-                    return search.toLowerCase() === '' 
-                        ? item 
+                {records.filter((item) => {
+                    return search.toLowerCase() === ''
+                        ? item
                         : item.bike_name.toLowerCase().includes(search.toLowerCase());
                 }).map(bike => (
                     <div key={bike._id} className='w-72 h-[400px] bg-white border border-gray-300 rounded-xl flex flex-col items-center m-6'>
@@ -142,6 +154,15 @@ function Bikes() {
                         </Link>
                     </div>
                 ))}
+            </div>
+            <Pagination
+                itemsPerPage={itemsPerPage}
+                totalItems={bikes.length}
+                paginate={paginate}
+                currentPage={currentPage}
+            />
+            <div className='mt-16'>
+                <Footer />
             </div>
         </div>
     );

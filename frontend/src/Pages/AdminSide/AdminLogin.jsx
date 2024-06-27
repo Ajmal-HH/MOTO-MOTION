@@ -50,7 +50,9 @@ function AdminLogin() {
 
   }
   return (
-    <div className='bg-green-300 min-h-screen w-full flex flex-col justify-center items-center'>
+    <div className=' min-h-screen w-full flex flex-col justify-center items-center'style={{
+      background: 'linear-gradient(90deg,rgba(2,0,36,1) 0%,rgba(74,14,154,1) 35%,rgba(0,212,225,1)100%)',
+    }}>
       <div className='w-72 min-h-80 bg-white rounded-3xl'>
         <h1 className='text-center font-googleFont text-xl pt-3'>ADMIN LOGIN</h1>
         <div className='pl-6 mt-5 font-googleFont'>

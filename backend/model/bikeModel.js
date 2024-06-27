@@ -64,6 +64,10 @@ const bikeSchema = mongoose.Schema({
                 type: String,
                 required: true
 
+            },
+            date : {
+                type : Date,
+                required : true
             }
         }],
     created_On: {
