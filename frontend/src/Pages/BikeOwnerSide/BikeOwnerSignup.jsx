@@ -20,7 +20,7 @@ function BikeOwnerSignup() {
 
   useEffect(() => {
     if (token) {
-      navigate('/bikeowner-details');
+      navigate('/bikeowner-dashboard');
     }
   }, [token, navigate]);
 
@@ -56,7 +56,9 @@ function BikeOwnerSignup() {
   
 
   return (
-    <div className='bg-green-300 min-h-screen flex flex-col '>
+    <div className='min-h-screen flex flex-col'style={{
+      background: 'linear-gradient(90deg,rgba(2,0,36,1) 0%,rgba(74,14,154,1) 35%,rgba(0,212,225,1)100%)',
+    }}>
       <Header />
 
       <div className='flex flex-grow justify-center items-center'>

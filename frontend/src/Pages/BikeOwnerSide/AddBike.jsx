@@ -4,6 +4,8 @@ import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify'
 import { addBikeValidationSchema } from '../../FormValidation'
 import { useNavigate } from 'react-router-dom'
+import Loader from '../../Components/All/Loader'
+
 
 
 function AddBike() {
@@ -18,12 +20,14 @@ function AddBike() {
     const [address, setAddress] = useState('')
     const [pinCode, setPinCode] = useState()
     const [errors, setErrors] = useState({})
+    const [loader, setLoader] = useState(false)
     const navigate = useNavigate()
 
     console.log(image,"image");
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoader(true)
         try {
             await addBikeValidationSchema.validate(
                 { bikeName, bikeNO, location, rent, bikeType, bikeCC, details, image, address, pinCode },
@@ -49,13 +53,14 @@ function AddBike() {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-                .then((result) => {
-                    console.log(result);
+                .then(() => {
+                    setLoader(false)
                     toast.success('New bike added')
                     navigate('/bikeowner-bikedetails')
                 })
                 .catch((err) => {
                     if (err.response && err.response.data && err.response.data.message) {
+                        setLoader(false)
                         toast.error(err.response.data.message);
                     } else {
                         toast.error('An error occurred. Please try again later.');
@@ -80,7 +85,7 @@ function AddBike() {
         <div className="flex justify-center items-center">
             <BikeOwnerSidebar />
             <div className="bg-gray-200 w-full font-googleFont p-8 rounded-lg">
-                
+
             <div className="bg-gray-200 w-full font-googleFont p-8 rounded-lg">
                     <div className="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
                         <h1 className="text-3xl font-bold text-center mb-6">ADD BIKE</h1>
@@ -212,7 +217,7 @@ function AddBike() {
 
                                 </div>
                                 <div>
-                                    <label htmlFor="image" className="block text-sm font-semibold text-gray-700">Add Image</label>
+                                    <label htmlFor="image" className="block text-sm font-semibold text-gray-700">Add Image </label>
                                     <input
                                         type="file"
                                         id="image"
@@ -232,8 +237,9 @@ function AddBike() {
                                 </div>
                             </div>
 
-                            <button type="submit" className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-400 focus:ring-opacity-75">
-                                ADD BIKE
+                            <button type="submit" className="w-full flex justify-center py-3 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-400 focus:ring-opacity-75">
+                                {loader ? <Loader /> : "ADD BIKE" }
+
                             </button>
                         </form>
                     </div>

@@ -316,6 +316,76 @@ const bookingList = async (req, res) => {
     }
 }
 
+const bikeOwnerDashboard = async (req, res) => {
+    try {
+        const id = req.session.ownerId;
+        console.log(id, "bikeowner id");
+
+        const bookings = await Booking.find({ bikeOwner_id: id });
+        const owner = await bikeOwner.findOne({ _id: id });
+        const bikes = await Bike.find({ bikeowner_id: id });
+        const totolBikes = bikes.length;
+        const totalBookings = bookings.length;
+
+        const revenue = await Booking.aggregate([
+            {
+                $match: { bikeOwner_id: id }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: "$total_amount" }
+                }
+            }
+        ]);
+
+        const totalRevenue = revenue.length > 0 ? revenue[0].totalRevenue : 0;
+
+        // Chart report
+        const today1 = new Date();
+        const currentMonth = today1.getMonth() + 1; // +1 because months are 0-based
+
+        const monthlySales = await Booking.aggregate([
+            {
+                $match: { bikeOwner_id: id }
+            },
+            {
+                $group: {
+                    _id: {
+                        month: { $month: '$createdAt' }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: {
+                    '_id.month': 1
+                }
+            }
+        ]);
+
+        console.log(monthlySales, "monthlySales");
+
+        // Initialize the structure to store monthly sales
+        const monthlySalesArray = Array.from({ length: 12 }, () => 0);
+
+        // Populate the structure
+        monthlySales.forEach(({ _id, count }) => {
+            const { month } = _id;
+            monthlySalesArray[month - 1] = count; // month - 1 to make it 0-based index
+        });
+
+        // Slice to get only the months up to the current month
+        const currentYearSalesArray = monthlySalesArray.slice(0, currentMonth);
+
+        console.log(currentYearSalesArray, "currentYearSalesArray");
+
+        res.json({ totalBookings, totolBikes, owner, totalRevenue, monthlySales: currentYearSalesArray });
+    } catch (error) {
+        console.log("error in bikeOwnerDashboard", error.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
 
 
 
@@ -330,6 +400,7 @@ export {
     ownerEditBike,
     loadOwnerDetails,
     logoutOwner,
-    bookingList
+    bookingList,
+    bikeOwnerDashboard
 
 }

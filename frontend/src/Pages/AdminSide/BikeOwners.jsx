@@ -4,6 +4,7 @@ import axios from '../../utils/axiosConfig'
 import { toast } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { Link, useNavigate } from 'react-router-dom'
+import Pagination from '../../Components/All/Pagination'
 
 
 function BikeOwners() {
@@ -11,14 +12,7 @@ function BikeOwners() {
     const navigate = useNavigate()
     const [owner, setOwner] = useState([])
 
-       //pagination
-       const [currentPage, setCurrentPage] = useState(1)
-       const recordPerPage = 5
-       const lastIndex = currentPage * recordPerPage
-       const firstIndex = lastIndex - recordPerPage
-       const records = owner.slice(firstIndex,lastIndex)
-       const npage = Math.ceil(owner.length / recordPerPage)
-       const numbers = [...Array(npage + 1).keys()].slice(1)
+
 
     useEffect(() => {
         if (!token) {
@@ -31,6 +25,7 @@ function BikeOwners() {
             .catch(error => {
                 console.error('Error fetching owner details:', error);
             });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     const handleBlock = async (ownerId) => {
@@ -67,19 +62,14 @@ function BikeOwners() {
         }
     }
 
-    const prePage = ()=>{
-        if(currentPage !== 1){
-            setCurrentPage(currentPage - 1)
-        }
-    }
-    const changeCPage = (id) =>{
-        setCurrentPage(id)
-    }
-    const nextPage = () =>{
-        if(currentPage !== npage){
-            setCurrentPage(currentPage + 1)
-        }
-    }
+    //pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Items per page
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const records = owner.slice(indexOfFirstItem, indexOfLastItem);
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
 
     return (
@@ -103,7 +93,7 @@ function BikeOwners() {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {records.map((owner, index) => (
                                 <tr key={owner._id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{(currentPage - 1) * recordPerPage + index + 1}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{owner.bikeowner_name}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{owner.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -133,27 +123,12 @@ function BikeOwners() {
 
                         </tbody>
                     </table>
-                    <nav className="mt-4 flex justify-center">
-    <ul className="pagination flex">
-        <li className="page-item">
-            <button onClick={prePage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l">
-                Prev
-            </button>
-        </li>
-        {numbers.map((n, i) => (
-            <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
-                <button onClick={() => changeCPage(n)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
-                    {n}
-                </button>
-            </li>
-        ))}
-        <li className="page-item">
-            <button onClick={nextPage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r">
-                Next
-            </button>
-        </li>
-    </ul>
-</nav>
+                    <Pagination
+                        itemsPerPage={itemsPerPage}
+                        totalItems={owner.length}
+                        paginate={paginate}
+                        currentPage={currentPage}
+                    />
                 </div>
             </div>
         </div>

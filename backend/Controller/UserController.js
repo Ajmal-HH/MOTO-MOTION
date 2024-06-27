@@ -6,6 +6,7 @@ import { sendMail } from '../utils/nodemailer.js'
 import bcrypt from 'bcrypt'
 import Booking from '../model/bookingModel.js'
 import jwt from 'jsonwebtoken'
+import Bike from '../model/bikeModel.js'
 
 
 const securePassword = async(password)=>{
@@ -127,6 +128,8 @@ const verifyLogin = asyncHandler(async(req,res)=>{
             if(passwordMatch){
                 if(!userData?.isBlocked ){
                     const token = generateToken(userData._id);
+                    // Set the token and user ID in the authentication context
+                    req.authUser = { token, userId: userData._id };
                     res.cookie('jwt', token, {
                         httpOnly: false,
                         secure: false,
@@ -153,6 +156,14 @@ const verifyLogin = asyncHandler(async(req,res)=>{
     
 })
 
+const loadHomePage = async (req,res) =>{
+    try {
+        const bikes = await Bike.find()
+        res.json(bikes)
+    } catch (error) {
+        console.log("error from loadHomePage",error.message);
+    }
+}
 
 const loadBikes = asyncHandler(async(req,res)=>{
     try {
@@ -372,18 +383,21 @@ const userBookingList = async (req, res) => {
 const bikeReview = async(req,res) =>{
     try {
         const {review,bikeId} = req.body
+        if(review.trim().length !=0){
         const userId = req.session.userId
         const user = await User.findOne({_id : userId})
         const userReview = {
             username: user.name,
-            review: review
+            review: review,
+            date : Date.now()
         };
         const bike = await Bikes.findByIdAndUpdate(bikeId,
             { $push: { reviews: userReview } },
             { new: true });
 
             res.status(200)
-            .json({message: 'Review added successfully', username: user.name});
+            .json({message: 'Review added successfully', username: user.name, date : userReview.date});
+        }
   
     } catch (error) {
         console.log(error.message);
@@ -410,6 +424,7 @@ export {
     verifyOTP,
     verifyLogin,
     logoutUser ,
+    loadHomePage,
     loadBikes,
     bikeDetails,
     userProfile,

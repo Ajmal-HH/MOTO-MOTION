@@ -17,7 +17,7 @@ function BikeOwnerLogin() {
 
   useEffect(() => {
     if (token) {
-      navigate('/bikeowner-details');
+      navigate('/bikeowner-dashboard');
     }
   }, [token, navigate]);
 
@@ -30,7 +30,7 @@ function BikeOwnerLogin() {
       axios.post(`/bikeowner/bikeowner-login`, { email, password })
         .then(() => {
           toast.success('Login successfully')
-          navigate('/bikeowner-details')
+          navigate('/bikeowner-dashboard')
         })
         .catch((err) => {
           console.log(err.response.data.message);
@@ -53,7 +53,9 @@ function BikeOwnerLogin() {
   }
 
   return (
-    <div className='bg-green-300 min-h-screen w-full flex flex-col'>
+    <div className='min-h-screen w-full flex flex-col'  style={{
+      background: 'linear-gradient(90deg,rgba(2,0,36,1) 0%,rgba(74,14,154,1) 35%,rgba(0,212,225,1)100%)',
+    }}>
       <Header />
       <div className='flex flex-grow justify-center items-center'>
         <div className='w-72 min-h-72 bg-white rounded-3xl'>

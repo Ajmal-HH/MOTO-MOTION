@@ -1,9 +1,10 @@
 import express from 'express'
-import {  addNewUser, addbikeOwner, adminAuth, adminBikeList, adminBookingList, adminEditOwer, adminEdituser, bikeOwnerList, blockOwner, blockUser, loadAdminEditUser, loadAdminOwnerEdit, logoutAdmin, unblockOwner, unblockUser, userDetails, userList, verifyDocument, verifyDocumentList } from '../Controller/AdminController.js'
+import {  addNewUser, addbikeOwner, adminAuth, adminBikeList, adminBookingList, adminDashboard, adminEditOwer, adminEdituser, bikeOwnerList, blockOwner, blockUser, loadAdminEditUser, loadAdminOwnerEdit, logoutAdmin, unblockOwner, unblockUser, userDetails, userList, verifyDocument, verifyDocumentList } from '../Controller/AdminController.js'
 
 const admin_router = express.Router()
 
 admin_router.post('/admin-login',adminAuth)
+admin_router.get('/admin-dash',adminDashboard)
 admin_router.get('/users',userList)
 admin_router.get('/verfiy-document-list',verifyDocumentList)
 admin_router.get('/owners',bikeOwnerList)

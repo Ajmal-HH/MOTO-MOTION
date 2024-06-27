@@ -1,5 +1,5 @@
 import express from 'express'
-import {    addBike, bikeList, bikeOwnerLogin, bikeOwnerSignup, bookingList, deleteBike, loadOwnerDetails, loadOwnerEditBike, logoutOwner, ownerEditBike } from '../Controller/BikeOwnerController.js'
+import {    addBike, bikeList, bikeOwnerDashboard, bikeOwnerLogin, bikeOwnerSignup, bookingList, deleteBike, loadOwnerDetails, loadOwnerEditBike, logoutOwner, ownerEditBike } from '../Controller/BikeOwnerController.js'
 import { bookingAction } from '../Controller/BookingController.js'
 import uploadprdt from '../utils/multer.js'
 
@@ -32,6 +32,7 @@ bikeowner_router.use(express.static('public'))
 
 bikeowner_router.post('/bikeowner-signup',bikeOwnerSignup)
 bikeowner_router.post('/bikeowner-login',bikeOwnerLogin)
+bikeowner_router.get('/bikeowner-dashboard',bikeOwnerDashboard)
 bikeowner_router.get('/loadowner-details',loadOwnerDetails)
 bikeowner_router.post('/addbike',uploadprdt.array('image'),addBike)
 bikeowner_router.get('/bike-list',bikeList)
